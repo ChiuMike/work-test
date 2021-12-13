@@ -1,26 +1,39 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect } from 'react';
 import './App.css';
+import Login from './Components/Login';
+import LoadingOverlay from 'react-loading-overlay-ts';
+import { useSelector, RootStateOrAny, useDispatch } from 'react-redux';
+import { Route,HashRouter,Switch } from "react-router-dom";
+import Dashboard from './Components/DashBoard/Dashboard';
+import {AlertActs} from './Redux/action/alertAction/AlertAction';
+// import PrivateRoute from './Components/PrivateRoute/PrivateRoute';
 
 function App() {
+  const dispatch=useDispatch();
+  const loading=useSelector((state:RootStateOrAny)=>state.UserLoginReducer.loading);
+  const alert=useSelector((state:RootStateOrAny)=>state.UserLoginReducer.token);
+
+  console.log("Alert!!!");
+  console.log(alert)
+
+  useEffect(()=>{
+    dispatch(AlertActs.clear());
+  },[])
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <HashRouter>
+      <Switch>
+        <div className="App">
+          <LoadingOverlay
+            active={loading}
+            spinner
+            text='Login...'>
+            <Route path="/" exact render={()=>{return(<Login />)}} />
+            <Route path="/dashboard" render={()=>{return(<Dashboard />)}} />
+          </LoadingOverlay>  
+        </div>
+      </Switch>
+    </HashRouter>
   );
 }
-
 export default App;
